@@ -31,21 +31,18 @@ import org.jebtk.core.AppVersion;
 import org.jebtk.modern.UIService;
 import org.jebtk.modern.help.GuiAppInfo;
 
-
 /**
  * The class PathwayInfo.
  */
 public class MutationInfo extends GuiAppInfo {
 
-	/**
-	 * Instantiates a new pathway info.
-	 */
-	public MutationInfo() {
-		super("Mutations",
-				new AppVersion(1),
-				"Copyright (C) 2017 Antony Holmes",
-				UIService.getInstance().loadIcon(MutationsIcon.class, 32),
-				UIService.getInstance().loadIcon(MutationsIcon.class, 128));
-	}
+  /**
+   * Instantiates a new pathway info.
+   */
+  public MutationInfo() {
+    super("Mutations", new AppVersion(1), "Copyright (C) 2017 Antony Holmes",
+        UIService.getInstance().loadIcon(MutationsIcon.class, 32),
+        UIService.getInstance().loadIcon(MutationsIcon.class, 128));
+  }
 
 }

@@ -27,8 +27,6 @@
  */
 package edu.columbia.rdf.matcalc.toolbox.mutations.app;
 
-
-
 import java.awt.FontFormatException;
 import java.io.IOException;
 
@@ -46,23 +44,22 @@ import org.xml.sax.SAXException;
 import edu.columbia.rdf.matcalc.bio.BioModuleLoader;
 import edu.columbia.rdf.matcalc.toolbox.mutations.MutationsModule;
 
-
-
-
 /**
  * The class MainPathway.
  */
 public class MainMutations {
-	
-	public static final void main(String[] args) throws FontFormatException, IOException, SAXException, ParserConfigurationException, ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
-		AppService.getInstance().setAppInfo("mutations");
-		
-		ThemeService.getInstance().setTheme(ColorTheme.ORANGE);
-		
-		ModuleLoader ml = new BioModuleLoader();
-		
-		ml.addModule(MutationsModule.class);
-		
-		MainMatCalc.main(new MutationInfo(), ml);
-	}
+
+  public static final void main(String[] args)
+      throws FontFormatException, IOException, SAXException, ParserConfigurationException, ClassNotFoundException,
+      InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
+    AppService.getInstance().setAppInfo("mutations");
+
+    ThemeService.getInstance().setTheme(ColorTheme.ORANGE);
+
+    ModuleLoader ml = new BioModuleLoader();
+
+    ml.addModule(MutationsModule.class);
+
+    MainMatCalc.main(new MutationInfo(), ml);
+  }
 }

@@ -50,169 +50,167 @@ import edu.columbia.rdf.matcalc.bio.SequenceUtils;
 import edu.columbia.rdf.matcalc.toolbox.CalcModule;
 import edu.columbia.rdf.matcalc.toolbox.mutations.app.MutationsIcon;
 
-
 /**
  * Map probes to genes.
  *
  * @author Antony Holmes Holmes
  *
  */
-public class MutationsModule extends CalcModule implements ModernClickListener  {
+public class MutationsModule extends CalcModule implements ModernClickListener {
 
-	/**
-	 * The member convert button.
-	 */
-	private RibbonLargeButton mConvertButton = 
-			new RibbonLargeButton("Mutations", 
-					UIService.getInstance().loadIcon(MutationsIcon.class, 24));
+  /**
+   * The member convert button.
+   */
+  private RibbonLargeButton mConvertButton = new RibbonLargeButton("Mutations",
+      UIService.getInstance().loadIcon(MutationsIcon.class, 24));
 
+  /**
+   * The member window.
+   */
+  private MainMatCalcWindow mWindow;
 
-	/**
-	 * The member window.
-	 */
-	private MainMatCalcWindow mWindow;
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.abh.lib.NameProperty#getName()
+   */
+  @Override
+  public String getName() {
+    return "Mutations";
+  }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see edu.columbia.rdf.apps.matcalc.modules.Module#init(edu.columbia.rdf.apps.
+   * matcalc.MainMatCalcWindow)
+   */
+  @Override
+  public void init(MainMatCalcWindow window) {
+    mWindow = window;
 
-	/* (non-Javadoc)
-	 * @see org.abh.lib.NameProperty#getName()
-	 */
-	@Override
-	public String getName() {
-		return "Mutations";
-	}
+    // home
+    mWindow.getRibbon().getToolbar("DNA").getSection("Mutations").add(mConvertButton);
 
-	/* (non-Javadoc)
-	 * @see edu.columbia.rdf.apps.matcalc.modules.Module#init(edu.columbia.rdf.apps.matcalc.MainMatCalcWindow)
-	 */
-	@Override
-	public void init(MainMatCalcWindow window) {
-		mWindow = window;
+    mConvertButton.addClickListener(this);
+  }
 
-		// home
-		mWindow.getRibbon().getToolbar("DNA").getSection("Mutations").add(mConvertButton);
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.abh.lib.ui.modern.event.ModernClickListener#clicked(org.abh.lib.ui.modern
+   * .event.ModernClickEvent)
+   */
+  @Override
+  public final void clicked(ModernClickEvent e) {
+    try {
+      mutations();
+    } catch (IOException | InvalidFormatException e1) {
+      e1.printStackTrace();
+    }
+  }
 
-		mConvertButton.addClickListener(this);
-	}
+  private void mutations() throws IOException, InvalidFormatException {
+    DataFrame m = mWindow.getCurrentMatrix();
 
+    List<SearchSequence> sequences = SequenceUtils.matrixToSequences(m);
 
+    if (sequences.size() == 0) {
+      ModernMessageDialog.createWarningDialog(mWindow, "There are no suitable DNA sequences in the table.");
 
-	/* (non-Javadoc)
-	 * @see org.abh.lib.ui.modern.event.ModernClickListener#clicked(org.abh.lib.ui.modern.event.ModernClickEvent)
-	 */
-	@Override
-	public final void clicked(ModernClickEvent e) {
-		try {
-			mutations();
-		} catch (IOException | InvalidFormatException e1) {
-			e1.printStackTrace();
-		}
-	}
+      return;
+    }
 
-	private void mutations() throws IOException, InvalidFormatException {
-		DataFrame m = mWindow.getCurrentMatrix();
+    Path mutationFile = ExcelUI.openExcelFileDialog(mWindow, RecentFilesService.getInstance().getPwd());
 
-		List<SearchSequence> sequences = SequenceUtils.matrixToSequences(m);
+    List<String> lines = Excel.getTextFromFile(mutationFile, true);
 
-		if (sequences.size() == 0) {
-			ModernMessageDialog.createWarningDialog(mWindow, 
-					"There are no suitable DNA sequences in the table.");
+    List<Mutation> mutations = Mutation.parse(lines);
 
-			return;
-		}
+    // Check output
+    Mutation.toString(mutations, System.err);
 
-		Path mutationFile = ExcelUI.openExcelFileDialog(mWindow, 
-				RecentFilesService.getInstance().getPwd());
+    MutationsDialog dialog = new MutationsDialog(mWindow, mutations);
 
-		List<String> lines = Excel.getTextFromFile(mutationFile, true);
+    dialog.setVisible(true);
 
-		List<Mutation> mutations = Mutation.parse(lines);
-		
-		// Check output
-		Mutation.toString(mutations, System.err);
+    if (dialog.isCancelled()) {
+      return;
+    }
 
-		MutationsDialog dialog = new MutationsDialog(mWindow, mutations);
+    int rows = sequences.size() * lines.size();
 
-		dialog.setVisible(true);
+    boolean allMutationsMode = dialog.all();
 
-		if (dialog.isCancelled()) {
-			return;
-		}
+    if (allMutationsMode) {
+      rows += 1;
+    }
 
-		int rows = sequences.size() * lines.size();
-		
-		boolean allMutationsMode = dialog.all();
+    boolean wildMode = dialog.wild();
 
-		if (allMutationsMode) {
-			rows += 1;
-		}
-		
-		boolean wildMode = dialog.wild();
+    if (wildMode) {
+      rows += 1;
+    }
 
-		if (wildMode) {
-			rows += 1;
-		}
+    DataFrame m2 = DataFrame.createDataFrame(rows, 3);
 
-		
+    int r = 0;
 
-		DataFrame m2 = DataFrame.createDataFrame(rows, 3);
+    int trim5p = dialog.getTrim5p();
+    int trim3p = dialog.getTrim3p();
 
-		int r = 0;
-		
-		int trim5p = dialog.getTrim5p();
-		int trim3p = dialog.getTrim3p();
-		
-		
-		for (SearchSequence sequence : sequences) {
-			String dna = sequence.getDna().toString();
-			
-			int l = dna.length();
-			
-			int trimL = l - trim5p - trim3p;
-			
-			char[] all = dna.toCharArray();
+    for (SearchSequence sequence : sequences) {
+      String dna = sequence.getDna().toString();
 
-			for (Mutation mutation : mutations) {
-				int index = mutation.getIndex();
-				
-				if (index < 0 || index >= l) {
-					continue;
-				}
-				
-				char[] bases = dna.toCharArray();
+      int l = dna.length();
 
-				char to = mutation.getTo().charAt(0);
+      int trimL = l - trim5p - trim3p;
 
-				bases[index] = to;
-				all[index] = to;
+      char[] all = dna.toCharArray();
 
-				m2.set(r, 0, sequence.getId());
-				m2.set(r, 1, sequence.getId() + "_" + mutation.toString());
-				m2.set(r, 2, new String(bases, trim5p, trimL));
+      for (Mutation mutation : mutations) {
+        int index = mutation.getIndex();
 
-				++r;
-			}
+        if (index < 0 || index >= l) {
+          continue;
+        }
 
-			if (allMutationsMode) {
-				m2.set(r, 0, sequence.getId());
-				m2.set(r, 1, sequence.getId() + "_all");
-				m2.set(r, 2, new String(all, trim5p, trimL));
+        char[] bases = dna.toCharArray();
 
-				++r;
-			}
-			
-			if (wildMode) {
-				m2.set(r, 0, sequence.getId());
-				m2.set(r, 1, sequence.getId());
-				m2.set(r, 2, dna.substring(trim5p, l - trim3p));
+        char to = mutation.getTo().charAt(0);
 
-				++r;
-			}
-		}
+        bases[index] = to;
+        all[index] = to;
 
-		m2.setColumnName(0, "Id");
-		m2.setColumnName(1, "Mutation");
-		m2.setColumnName(2, "DNA Sequence");
+        m2.set(r, 0, sequence.getId());
+        m2.set(r, 1, sequence.getId() + "_" + mutation.toString());
+        m2.set(r, 2, new String(bases, trim5p, trimL));
 
-		mWindow.addToHistory("Mutations", m2);
-	}
+        ++r;
+      }
+
+      if (allMutationsMode) {
+        m2.set(r, 0, sequence.getId());
+        m2.set(r, 1, sequence.getId() + "_all");
+        m2.set(r, 2, new String(all, trim5p, trimL));
+
+        ++r;
+      }
+
+      if (wildMode) {
+        m2.set(r, 0, sequence.getId());
+        m2.set(r, 1, sequence.getId());
+        m2.set(r, 2, dna.substring(trim5p, l - trim3p));
+
+        ++r;
+      }
+    }
+
+    m2.setColumnName(0, "Id");
+    m2.setColumnName(1, "Mutation");
+    m2.setColumnName(2, "DNA Sequence");
+
+    mWindow.addToHistory("Mutations", m2);
+  }
 }
