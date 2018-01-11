@@ -32,7 +32,6 @@ import java.nio.file.Path;
 import java.util.List;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.jebtk.bioinformatics.dna.Sequence;
 import org.jebtk.bioinformatics.genomic.Mutation;
 import org.jebtk.math.external.microsoft.Excel;
 import org.jebtk.math.matrix.DataFrame;
@@ -82,7 +81,8 @@ public class MutationsModule extends CalcModule implements ModernClickListener {
   /*
    * (non-Javadoc)
    * 
-   * @see edu.columbia.rdf.apps.matcalc.modules.Module#init(edu.columbia.rdf.apps.
+   * @see
+   * edu.columbia.rdf.apps.matcalc.modules.Module#init(edu.columbia.rdf.apps.
    * matcalc.MainMatCalcWindow)
    */
   @Override
@@ -90,7 +90,8 @@ public class MutationsModule extends CalcModule implements ModernClickListener {
     mWindow = window;
 
     // home
-    mWindow.getRibbon().getToolbar("DNA").getSection("Mutations").add(mConvertButton);
+    mWindow.getRibbon().getToolbar("DNA").getSection("Mutations")
+        .add(mConvertButton);
 
     mConvertButton.addClickListener(this);
   }
@@ -99,8 +100,8 @@ public class MutationsModule extends CalcModule implements ModernClickListener {
    * (non-Javadoc)
    * 
    * @see
-   * org.abh.lib.ui.modern.event.ModernClickListener#clicked(org.abh.lib.ui.modern
-   * .event.ModernClickEvent)
+   * org.abh.lib.ui.modern.event.ModernClickListener#clicked(org.abh.lib.ui.
+   * modern .event.ModernClickEvent)
    */
   @Override
   public final void clicked(ModernClickEvent e) {
@@ -117,12 +118,14 @@ public class MutationsModule extends CalcModule implements ModernClickListener {
     List<SearchSequence> sequences = SequenceUtils.matrixToSequences(m);
 
     if (sequences.size() == 0) {
-      ModernMessageDialog.createWarningDialog(mWindow, "There are no suitable DNA sequences in the table.");
+      ModernMessageDialog.createWarningDialog(mWindow,
+          "There are no suitable DNA sequences in the table.");
 
       return;
     }
 
-    Path mutationFile = ExcelUI.openExcelFileDialog(mWindow, RecentFilesService.getInstance().getPwd());
+    Path mutationFile = ExcelUI.openExcelFileDialog(mWindow,
+        RecentFilesService.getInstance().getPwd());
 
     List<String> lines = Excel.getTextFromFile(mutationFile, true);
 

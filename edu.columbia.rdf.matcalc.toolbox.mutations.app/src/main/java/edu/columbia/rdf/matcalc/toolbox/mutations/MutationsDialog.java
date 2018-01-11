@@ -24,11 +24,13 @@ public class MutationsDialog extends ModernDialogHelpWindow {
 
   private CheckBox mCheckWild = new ModernCheckSwitch("Wild type", true);
 
-  private ModernCompactSpinner m5pField = new ModernCompactSpinner(0, 10000, 2000, 1, false);
+  private ModernCompactSpinner m5pField = new ModernCompactSpinner(0, 10000,
+      2000, 1, false);
 
   private CheckBox mCheckTrim3p = new ModernCheckSwitch("Trim 3'");
 
-  private ModernCompactSpinner m3pField = new ModernCompactSpinner(0, 10000, 2000, 1, false);
+  private ModernCompactSpinner m3pField = new ModernCompactSpinner(0, 10000,
+      2000, 1, false);
 
   public MutationsDialog(ModernWindow parent, List<Mutation> mutations) {
     super(parent, "mutations.help.url");
