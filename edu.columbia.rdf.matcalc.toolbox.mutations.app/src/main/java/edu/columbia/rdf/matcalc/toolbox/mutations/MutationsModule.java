@@ -32,6 +32,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.jebtk.bioinformatics.genomic.Genome;
 import org.jebtk.bioinformatics.genomic.Mutation;
 import org.jebtk.math.external.microsoft.Excel;
 import org.jebtk.math.matrix.DataFrame;
@@ -113,9 +114,11 @@ public class MutationsModule extends CalcModule implements ModernClickListener {
   }
 
   private void mutations() throws IOException, InvalidFormatException {
+    String genome = Genome.HG19;
+    
     DataFrame m = mWindow.getCurrentMatrix();
 
-    List<SearchSequence> sequences = SequenceUtils.matrixToSequences(m);
+    List<SearchSequence> sequences = SequenceUtils.matrixToSequences(genome, m);
 
     if (sequences.size() == 0) {
       ModernMessageDialog.createWarningDialog(mWindow,
