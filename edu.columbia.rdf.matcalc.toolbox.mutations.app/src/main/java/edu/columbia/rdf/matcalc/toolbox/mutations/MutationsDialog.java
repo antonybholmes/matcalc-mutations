@@ -62,7 +62,7 @@ public class MutationsDialog extends ModernDialogHelpWindow {
     box.add(mCheckWild);
     // UI.setSize(mArrayCombo, ModernWidget.VERY_LARGE_SIZE);
 
-    setDialogCardContent(box);
+    setCard(box);
   }
 
   public boolean all() {
