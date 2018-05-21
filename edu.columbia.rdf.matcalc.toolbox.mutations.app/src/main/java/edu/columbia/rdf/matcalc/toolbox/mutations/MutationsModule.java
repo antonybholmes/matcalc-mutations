@@ -37,7 +37,7 @@ import org.jebtk.bioinformatics.genomic.Mutation;
 import org.jebtk.math.external.microsoft.Excel;
 import org.jebtk.math.matrix.DataFrame;
 import org.jebtk.math.ui.external.microsoft.ExcelUI;
-import org.jebtk.modern.UIService;
+import org.jebtk.modern.AssetService;
 import org.jebtk.modern.dialog.ModernMessageDialog;
 import org.jebtk.modern.event.ModernClickEvent;
 import org.jebtk.modern.event.ModernClickListener;
@@ -62,7 +62,7 @@ public class MutationsModule extends CalcModule implements ModernClickListener {
    * The member convert button.
    */
   private RibbonLargeButton mConvertButton = new RibbonLargeButton("Mutations",
-      UIService.getInstance().loadIcon(MutationsIcon.class, 24));
+      AssetService.getInstance().loadIcon(MutationsIcon.class, 24));
 
   /**
    * The member window.
