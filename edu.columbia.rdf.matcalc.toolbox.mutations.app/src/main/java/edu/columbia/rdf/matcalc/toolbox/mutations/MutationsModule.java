@@ -47,7 +47,7 @@ import org.jebtk.modern.ribbon.RibbonLargeButton;
 import edu.columbia.rdf.matcalc.MainMatCalcWindow;
 import edu.columbia.rdf.matcalc.bio.SearchSequence;
 import edu.columbia.rdf.matcalc.bio.SequenceUtils;
-import edu.columbia.rdf.matcalc.toolbox.CalcModule;
+import edu.columbia.rdf.matcalc.toolbox.Module;
 import edu.columbia.rdf.matcalc.toolbox.mutations.app.MutationsIcon;
 
 /**
@@ -56,7 +56,7 @@ import edu.columbia.rdf.matcalc.toolbox.mutations.app.MutationsIcon;
  * @author Antony Holmes Holmes
  *
  */
-public class MutationsModule extends CalcModule implements ModernClickListener {
+public class MutationsModule extends Module implements ModernClickListener {
 
   /**
    * The member convert button.
@@ -114,7 +114,7 @@ public class MutationsModule extends CalcModule implements ModernClickListener {
   }
 
   private void mutations() throws IOException, InvalidFormatException {
-    String genome = Genome.HG19;
+    Genome genome = Genome.HG19;
     
     DataFrame m = mWindow.getCurrentMatrix();
 
@@ -217,6 +217,6 @@ public class MutationsModule extends CalcModule implements ModernClickListener {
     m2.setColumnName(1, "Mutation");
     m2.setColumnName(2, "DNA Sequence");
 
-    mWindow.addToHistory("Mutations", m2);
+    mWindow.history().addToHistory("Mutations", m2);
   }
 }
