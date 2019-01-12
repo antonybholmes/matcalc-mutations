@@ -53,7 +53,7 @@ import edu.columbia.rdf.matcalc.toolbox.mutations.app.MutationsIcon;
 /**
  * Map probes to genes.
  *
- * @author Antony Holmes Holmes
+ * @author Antony Holmes
  *
  */
 public class MutationsModule extends Module implements ModernClickListener {
@@ -130,7 +130,7 @@ public class MutationsModule extends Module implements ModernClickListener {
     Path mutationFile = ExcelUI.openExcelFileDialog(mWindow,
         RecentFilesService.getInstance().getPwd());
 
-    List<String> lines = Excel.getTextFromFile(mutationFile, true);
+    String[] lines = Excel.getTextFromFile(mutationFile, true);
 
     List<Mutation> mutations = Mutation.parse(lines);
 
@@ -145,7 +145,7 @@ public class MutationsModule extends Module implements ModernClickListener {
       return;
     }
 
-    int rows = sequences.size() * lines.size();
+    int rows = sequences.size() * lines.length;
 
     boolean allMutationsMode = dialog.all();
 
