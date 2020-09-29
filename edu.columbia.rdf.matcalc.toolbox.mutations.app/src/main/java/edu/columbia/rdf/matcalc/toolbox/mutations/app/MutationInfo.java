@@ -40,8 +40,7 @@ public class MutationInfo extends GuiAppInfo {
    * Instantiates a new pathway info.
    */
   public MutationInfo() {
-    super("Mutations", new AppVersion(1), "Copyright (C) 2017 Antony Holmes",
-        AssetService.getInstance().loadIcon(MutationsIcon.class, 32),
+    super("Mutations", new AppVersion(2), "Copyright (C) 2017-${year} Antony Holmes",
         AssetService.getInstance().loadIcon(MutationsIcon.class, 128));
   }
 
